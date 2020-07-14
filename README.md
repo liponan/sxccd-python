@@ -1,7 +1,7 @@
 # sxccd-python
 Python API for Startlight Xpress CCD (sxccd)
 
-Okay, let's face it. Startlight CCDs ship with a use-to-use GUI software Startlight Live, which has a infamouse bug: it crashes when the image is too large or exposure time is too long. 
+Okay, let's face it. Startlight CCDs ship with a easy-to-use GUI software Startlight Live, which has an infamouse bug: it crashes when the image is too large or exposure time is too long. 
 For example, on my Mac BookPro, the longest exposure tiem I can do is 500ms with 2x2 binning.
 Not a chance for 1x1 binning even with 1ms exposure time.
 
