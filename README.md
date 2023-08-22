@@ -18,6 +18,7 @@ For example:
 ```
 import sxccd
 
+
 camera = sxccd.Camera()
 
 # print out camera model
@@ -37,7 +38,7 @@ echo_result = camera.echo("Hello world!")
 print( echo_result )
 
 # Timed exposure
-image = readPixelsDelayed( exp_ms, width, height, x_bin=1, y_bin=1, x_offset=0, y_offset=0, verbose=False)
+image = sxccd.readPixelsDelayed(exp_ms, width, height, x_bin=1, y_bin=1, x_offset=0, y_offset=0, verbose=False)
 
 ```
 
