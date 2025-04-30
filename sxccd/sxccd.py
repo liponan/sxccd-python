@@ -1,5 +1,6 @@
 import json
 import time
+import os.path as osp
 
 import usb.core
 
@@ -8,8 +9,11 @@ from .sxccd_utils import *
 
 class Camera():
 
-    def __init__(self):
-        self.dev = usb.core.find(manufacturer="Starlight Xpress")
+    def __init__(self, idVendor:int = None, idProduct:int = None):
+        if idVendor and idProduct:
+            self.dev = usb.core.find(idVendor=idVendor, idProduct=idProduct)
+        else:
+            self.dev = usb.core.find(manufacturer="Starlight Xpress")
         self.timeout = 1000
 
     def firmwareVersion(self):
@@ -23,7 +27,7 @@ class Camera():
         # get CAMERA MODEL
         result = self.dev.ctrl_transfer( 0xC0, 14, 0, 0, 2 )
         model_id = decLH( result )
-        models = json.load( open("models.json") )
+        models = json.load( open(osp.join(osp.dirname(osp.abspath(__file__)), "models.json")) )
         try:
             print("Camera model: " + models[str(model_id)])
         except:
