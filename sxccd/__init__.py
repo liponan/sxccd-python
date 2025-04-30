@@ -1,3 +1,3 @@
-from . import sxccd
-from . import sxccd_image
-from . import sxccd_utils
+from .sxccd import *
+from .sxccd_image import *
+from .sxccd_utils import *

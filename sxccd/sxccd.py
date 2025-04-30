@@ -3,7 +3,7 @@ import time
 
 import usb.core
 
-from sxccd_utils import *
+from .sxccd_utils import *
 
 
 class Camera():
