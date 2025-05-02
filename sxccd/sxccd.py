@@ -1,6 +1,8 @@
 import json
 import time
 import os.path as osp
+import numpy as np
+from PIL import Image
 
 import usb.core
 
@@ -70,7 +72,7 @@ class Camera():
         # assert(exp_ms<65536,
         #         "exposure time (in ms) must be smaller than 6556 (roughly 65.5 sec)")
 
-        params = self.parameters
+        params = self.parameters()
         # assert(width<=params["width"],
         #         "maximum width " + params["width"] + " pixels")
         # assert(height<=params["height"],
@@ -106,3 +108,26 @@ class Camera():
 
         image = dec2image( result1, h, w )
         return image
+    
+
+    def readSensor_interlaced(self, exp_ms: int):
+        # exp_ms in ]0, 6556[
+        exp_ms = int(exp_ms)
+        params = self.parameters()
+
+        w = params['width']
+        h = 2*params['height']
+        nPixels = w * h
+        payload = b'\x00\x00\x00\x00' \
+                    + dec2bytes(w) + dec2bytes(h) \
+                    + b'\x01\x01' + dec2bytes(exp_ms, 4)
+
+        cmd = b'\x40\x02\x04\x00\x00\x00' + dec2bytes(len(payload)) + payload
+
+        write = self.dev.write(0x01, cmd, self.timeout)
+        read = self.dev.read(0x82, 2*nPixels, max(2*exp_ms,5*self.timeout))
+
+        image = np.frombuffer(read, dtype=np.uint16).reshape((h, w))
+        image = Image.fromarray(image, mode='I;16')
+        return image
+
