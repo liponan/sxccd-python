@@ -3,6 +3,7 @@ import time
 import os.path as osp
 import numpy as np
 from PIL import Image
+from time import sleep
 
 import usb.core
 
@@ -110,9 +111,7 @@ class Camera():
         return image
     
 
-    def readSensor_interlaced(self, exp_ms: int):
-        # exp_ms in ]0, 6556[
-        exp_ms = int(exp_ms)
+    def readSensor_interlaced(self, exp_ms: float):
         params = self.parameters()
 
         w = params['width']
@@ -120,11 +119,12 @@ class Camera():
         nPixels = w * h
         payload = b'\x00\x00\x00\x00' \
                     + dec2bytes(w) + dec2bytes(h) \
-                    + b'\x01\x01' + dec2bytes(exp_ms, 4)
+                    + b'\x01\x01'
 
-        cmd = b'\x40\x02\x04\x00\x00\x00' + dec2bytes(len(payload)) + payload
+        cmd = b'\x40\x03\x04\x00\x00\x00' + dec2bytes(len(payload)) + payload
 
         write = self.dev.write(0x01, cmd, self.timeout)
+        sleep(exp_ms/1000)
         read = self.dev.read(0x82, 2*nPixels, max(2*exp_ms,5*self.timeout))
 
         image = np.frombuffer(read, dtype=np.uint16).reshape((h, w))
