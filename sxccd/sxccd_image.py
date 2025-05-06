@@ -1,10 +1,11 @@
 import argparse
-import sxccd
-import h5py
 import time
+
+import h5py
+import sxccd
 import numpy as np
 
-def takeImage( exp_ms, delay=0, prefix="images", nExp = 1, singleImage=True, bin=1 ):
+def takeImage(exp_ms, delay=0, prefix="images", nExp=1, singleImage=True, bin=1):
 
     sx = sxccd.Camera()
     sx.model()
@@ -13,8 +14,8 @@ def takeImage( exp_ms, delay=0, prefix="images", nExp = 1, singleImage=True, bin
     params = sx.parameters()
     width = params["width"]
     height = params["height"]
-    w = int( width / bin )
-    h = int( height / bin )
+    w = int(width / bin)
+    h = int(height / bin)
 
     filename = prefix + "_" + str(exp_ms).zfill(6) + ".h5"
     f = h5py.File(filename, 'w')
@@ -33,7 +34,7 @@ def takeImage( exp_ms, delay=0, prefix="images", nExp = 1, singleImage=True, bin
 
     for t in range(nExp):
         t1 = time.time()
-        img = sx.readPixelsDelayed( exp_ms, width, height, x_bin=bin, y_bin=bin,
+        img = sx.readPixelsDelayed(exp_ms, width, height, x_bin=bin, y_bin=bin,
                                 x_offset=0, y_offset=0, verbose=False)
         img_avg += img
 
@@ -45,9 +46,7 @@ def takeImage( exp_ms, delay=0, prefix="images", nExp = 1, singleImage=True, bin
 
     img_avg = img_avg.astype(np.float32) / nExp
     avg_set[:] = img_avg
-
     print("========== done " + str(nExp) + " images ========== \a\a\a")
-
     f.close()
 
 
@@ -74,5 +73,5 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     print(args)
-    takeImage( exp_ms=args.exp, delay=args.delay, prefix=args.prefix,
-                nExp = args.num, singleImage=args.single, bin=args.bin )
+    takeImage(exp_ms=args.exp, delay=args.delay, prefix=args.prefix,
+                nExp = args.num, singleImage=args.single, bin=args.bin)
