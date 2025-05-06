@@ -1,2 +1,4 @@
 pyusb
 h5py
+pillow
+numpy
