@@ -5,6 +5,7 @@ import h5py
 import sxccd
 import numpy as np
 
+
 def takeImage(exp_ms, delay=0, prefix="images", nExp=1, singleImage=True, bin=1):
 
     sx = sxccd.Camera()
@@ -17,7 +18,7 @@ def takeImage(exp_ms, delay=0, prefix="images", nExp=1, singleImage=True, bin=1)
     w = int(width / bin)
     h = int(height / bin)
 
-    filename = prefix + "_" + str(exp_ms).zfill(6) + ".h5"
+    filename = f"{prefix}_{exp_ms:06d}.h5"
     f = h5py.File(filename, 'w')
     avg_set = f.create_dataset("avg", (h, w), dtype=np.float32)
     if singleImage:
@@ -26,10 +27,8 @@ def takeImage(exp_ms, delay=0, prefix="images", nExp=1, singleImage=True, bin=1)
 
     img_avg = np.zeros( (h,w), dtype=np.uint32)
 
-    if delay>0:
-        print("=========== camera exposure starts in "
-                + str(delay) + " sec "
-                + "===========" )
+    if delay > 0:
+        print(f"=========== camera exposure starts in {delay} sec ===========" )
         time.sleep(delay)
 
     for t in range(nExp):
@@ -42,11 +41,11 @@ def takeImage(exp_ms, delay=0, prefix="images", nExp=1, singleImage=True, bin=1)
             img_set[:,:,t] = img
 
         t2 = time.time()
-        print("image " + str(t+1) + " done in " + str(t2-t1) + " sec \a")
+        print(f"image {t+1} done in {t2-t1} sec \a")
 
     img_avg = img_avg.astype(np.float32) / nExp
     avg_set[:] = img_avg
-    print("========== done " + str(nExp) + " images ========== \a\a\a")
+    print(f"========== done {nExp} images ========== \a\a\a")
     f.close()
 
 
