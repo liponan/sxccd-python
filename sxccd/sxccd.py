@@ -1,10 +1,10 @@
 import json
 import time
-import os.path as osp
-import numpy as np
-from PIL import Image
+import os
 from time import sleep
 
+import numpy as np
+from PIL import Image
 import usb.core
 
 from .sxccd_utils import *
@@ -28,9 +28,9 @@ class Camera():
 
     def model(self):
         # get CAMERA MODEL
-        result = self.dev.ctrl_transfer( 0xC0, 14, 0, 0, 2 )
-        model_id = decLH( result )
-        models = json.load( open(osp.join(osp.dirname(osp.abspath(__file__)), "models.json")) )
+        result = self.dev.ctrl_transfer(0xC0, 14, 0, 0, 2)
+        model_id = decLH(result)
+        models = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "models.json")) )
         try:
             print("Camera model: " + models[str(model_id)])
         except:
@@ -38,17 +38,17 @@ class Camera():
 
     def parameters(self):
         # get CCD parameters
-        result = self.dev.ctrl_transfer(0xC0, 8, 0, 0, 17 )
+        result = self.dev.ctrl_transfer(0xC0, 8, 0, 0, 17)
         params = {}
         params["hfront_porch"] = result[0]
         params["hback_porch"] = result[1]
-        params["width"] = decLH( result[2:4] )
+        params["width"] = decLH(result[2:4])
         params["vfront_porch"] = result[4]
         params["vback_porch"] = result[5]
-        params["height"] = decLH( result[6:8] )
-        params["pixel_width"] = decLH( result[8:10] ) / 256.0
-        params["pixel_height"] = decLH( result[10:12] ) / 256.0
-        params["color_matrix"] = decLH( result[12:14] )
+        params["height"] = decLH(result[6:8])
+        params["pixel_width"] = decLH(result[8:10]) / 256.0
+        params["pixel_height"] = decLH(result[10:12]) / 256.0
+        params["color_matrix"] = decLH(result[12:14])
         return params
 
     def reset(self):
@@ -64,7 +64,6 @@ class Camera():
         result1 = self.dev.read(0x82, len(string), self.timeout)
         echoed_string =  "".join([chr(c) for c in result1])
         return echoed_string
-
 
     def readPixelsDelayed(self, exp_ms, width, height, x_bin=1, y_bin=1,
                             x_offset=0, y_offset=0, verbose=False):
@@ -110,7 +109,6 @@ class Camera():
         image = dec2image( result1, h, w )
         return image
     
-
     def readSensor_interlaced(self, exp_ms: float):
         params = self.parameters()
 
