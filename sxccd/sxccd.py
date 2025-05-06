@@ -125,7 +125,7 @@ class Camera():
 
         write = self.dev.write(0x01, cmd, self.timeout)
         sleep(exp_ms/1000)
-        read = self.dev.read(0x82, 2*nPixels, max(2*exp_ms,5*self.timeout))
+        read = self.dev.read(0x82, 2*nPixels, 5*self.timeout)
 
         image = np.frombuffer(read, dtype=np.uint16).reshape((h, w))
         image = Image.fromarray(image, mode='I;16')
